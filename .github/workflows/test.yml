@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  laravel-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Prepare the environment
+        run: cp .env.github .env
+      - name: Set Composer config
+        run: composer config disable-tls true
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+      - name: Generate key
+        run: php artisan key:generate
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: php artisan test
+
